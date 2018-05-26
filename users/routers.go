@@ -33,6 +33,7 @@ func ProfileRegister(router *gin.RouterGroup) {
 
 func UserLIst(router *gin.RouterGroup) {
 	router.GET("/", UserListing)
+	router.GET("/:username", UserDetail)
 }
 
 func ProfileRetrieve(c *gin.Context) {
@@ -132,6 +133,17 @@ func UserListing(c *gin.Context) {
 	}
 	serializer := UsersSerializer{c, UserModels}
 	c.JSON(http.StatusOK, gin.H{"users": serializer.Response()})
+}
+
+func UserDetail(c *gin.Context) {
+	username := c.Param("username")
+	UserModel, err := FindOneUser(&UserModel{Username: username})
+	if err != nil {
+		c.JSON(http.StatusNotFound, common.NewError("details", errors.New("Invalid username")))
+		return
+	}
+	serializer := ListUserSerializer{c, UserModel}
+	c.JSON(http.StatusOK, gin.H{"details": serializer.Response()})
 }
 
 func UserUpdate(c *gin.Context) {
