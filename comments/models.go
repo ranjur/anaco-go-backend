@@ -16,6 +16,18 @@ type CommentModel struct {
 	Body      string `gorm:"size:2048"`
 }
 
+func GetUserComments(UserModel users.UserModel) ([]CommentModel, error) {
+	db := common.GetDB()
+	var models []CommentModel
+
+	tx := db.Begin()
+
+	tx.Where("to_user_id=?", UserModel.ID).Order("updated_at desc").Find(&models)
+	var err = tx.Commit().Error
+	return models, err
+}
+
+
 // Migrate the schema of database if needed
 func AutoMigrate() {
 	db := common.GetDB()

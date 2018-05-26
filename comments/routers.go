@@ -10,6 +10,8 @@ import (
 
 func CommentsRegister(router *gin.RouterGroup) {
 	router.POST("/", CommentCreate)
+	router.GET("/:username", UserCommentList)
+
 }
 
 func CommentCreate(c *gin.Context) {
@@ -32,4 +34,21 @@ func CommentCreate(c *gin.Context) {
 	}
 	serializer := CommentSerializer{c, commentModelValidator.commentModel}
 	c.JSON(http.StatusCreated, gin.H{"comments": serializer.Response()})
+}
+
+
+func UserCommentList(c *gin.Context) {
+	username := c.Param("username")
+	UserModel, err := users.FindOneUser(&users.UserModel{Username: username})
+	if err != nil {
+		c.JSON(http.StatusNotFound, common.NewError("comments", errors.New("Invalid username")))
+		return
+	}
+	commentModels, err := GetUserComments(UserModel)
+	if err != nil {
+		c.JSON(http.StatusNotFound, common.NewError("comments", errors.New("Database error")))
+		return
+	}
+	serializer := CommentsSerializer{c, commentModels}
+	c.JSON(http.StatusOK, gin.H{"comments": serializer.Response()})
 }

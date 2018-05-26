@@ -23,6 +23,7 @@ func main() {
 	defer db.Close()
 
 	r := gin.Default()
+
 	r.Static("/media", "./media")
 
 	v1 := r.Group("/api")
