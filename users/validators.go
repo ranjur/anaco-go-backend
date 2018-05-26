@@ -1,8 +1,11 @@
 package users
 
 import (
+
 	"anaco-go-backend/common"
 	"gopkg.in/gin-gonic/gin.v1"
+	"strings"
+	"gopkg.in/go-playground/validator.v8"
 )
 
 // *ModelValidator containing two parts:
@@ -27,6 +30,12 @@ func (self *UserModelValidator) Bind(c *gin.Context) error {
 	err := common.Bind(c, self)
 	if err != nil {
 		return err
+	}
+
+	if!(strings.HasSuffix(self.User.Email, "@sayonetech.com")){
+		return validator.ValidationErrors{"email": &validator.FieldError{
+			Field: "email", Param: "Only sayone emails accept",
+		}}
 	}
 	self.userModel.Username = self.User.Username
 	self.userModel.Email = self.User.Email
