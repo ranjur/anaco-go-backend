@@ -17,7 +17,7 @@ import (
 func UsersRegister(router *gin.RouterGroup) {
 	router.POST("/", UsersRegistration)
 	router.POST("/login", UsersLogin)
-	router.GET("/", UserListing)
+
 }
 
 func UserRegister(router *gin.RouterGroup) {
@@ -29,6 +29,10 @@ func ProfileRegister(router *gin.RouterGroup) {
 	router.GET("/:username", ProfileRetrieve)
 	router.POST("/:username/follow", ProfileFollow)
 	router.DELETE("/:username/follow", ProfileUnfollow)
+}
+
+func UserLIst(router *gin.RouterGroup) {
+	router.GET("/", UserListing)
 }
 
 func ProfileRetrieve(c *gin.Context) {
