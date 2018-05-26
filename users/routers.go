@@ -17,6 +17,7 @@ import (
 func UsersRegister(router *gin.RouterGroup) {
 	router.POST("/", UsersRegistration)
 	router.POST("/login", UsersLogin)
+	router.GET("/", UserListing)
 }
 
 func UserRegister(router *gin.RouterGroup) {
@@ -117,6 +118,16 @@ func UsersLogin(c *gin.Context) {
 func UserRetrieve(c *gin.Context) {
 	serializer := UserSerializer{c}
 	c.JSON(http.StatusOK, gin.H{"user": serializer.Response()})
+}
+
+func UserListing(c *gin.Context) {
+	UserModels, err := FindAllUsers()
+	if err != nil {
+		c.JSON(http.StatusNotFound, common.NewError("users", errors.New("Invalid params")))
+		return
+	}
+	serializer := UsersSerializer{c, UserModels}
+	c.JSON(http.StatusOK, gin.H{"users": serializer.Response()})
 }
 
 func UserUpdate(c *gin.Context) {
