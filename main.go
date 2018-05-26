@@ -27,8 +27,9 @@ func main() {
 	r.Static("/media", "./media")
 
 	v1 := r.Group("/api")
+	v1.Use(users.AuthMiddleware(true))
 	users.UsersRegister(v1.Group("/users"))
-	v1.Use(users.AuthMiddleware(false))
+	//v1.Use(users.AuthMiddleware(false))
 
 	v1.Use(users.AuthMiddleware(true))
 	users.UserRegister(v1.Group("/user"))

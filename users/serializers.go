@@ -35,6 +35,18 @@ func (self *ProfileSerializer) Response() ProfileResponse {
 
 type UserSerializer struct {
 	c *gin.Context
+
+}
+
+type ListUserSerializer struct {
+	c *gin.Context
+	UserModel
+
+}
+
+type UsersSerializer struct {
+	C        *gin.Context
+	Users []UserModel
 }
 
 type UserResponse struct {
@@ -57,4 +69,30 @@ func (self *UserSerializer) Response() UserResponse {
 		Token:    common.GenToken(myUserModel.ID),
 	}
 	return user
+}
+
+type ListUserResponse struct {
+	Username string  `json:"username"`
+	Email    string  `json:"email"`
+	Bio      string  `json:"bio"`
+	Image    string `json:"image"`
+}
+
+func (s *ListUserSerializer) Response() ListUserResponse {
+	user := ListUserResponse{
+		Username: s.Username,
+		Email:    s.Email,
+		Bio:      s.Bio,
+		Image:    s.Image,
+	}
+	return user
+}
+
+func (s *UsersSerializer) Response() [] ListUserResponse {
+	response := [] ListUserResponse{}
+	for _, user := range s.Users {
+		serializer := ListUserSerializer{s.C, user}
+		response = append(response, serializer.Response())
+	}
+	return response
 }

@@ -79,11 +79,11 @@ func FindOneUser(condition interface{}) (UserModel, error) {
 	return model, err
 }
 
-func FindAllUsers() (UserModel, error) {
+func FindAllUsers() ([]UserModel,error) {
 	db := common.GetDB()
-	var model UserModel
-	err := db.Find(&model).Error
-	return model, err
+	var models []UserModel
+	err := db.Find(&models).Error
+	return models, err
 }
 
 // You could input an UserModel which will be saved in database returning with error info
