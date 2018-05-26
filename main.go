@@ -8,10 +8,12 @@ import (
 	"github.com/jinzhu/gorm"
 	"anaco-go-backend/common"
 	"anaco-go-backend/users"
+	"anaco-go-backend/comments"
 )
 
 func Migrate(db *gorm.DB) {
 	users.AutoMigrate()
+	comments.AutoMigrate()
 }
 
 func main() {
@@ -30,6 +32,8 @@ func main() {
 	v1.Use(users.AuthMiddleware(true))
 	users.UserRegister(v1.Group("/user"))
 	users.ProfileRegister(v1.Group("/profiles"))
+
+	comments.CommentsRegister(v1.Group("/comments"))
 
 	testAuth := r.Group("/api/ping")
 
