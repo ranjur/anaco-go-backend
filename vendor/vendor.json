@@ -171,18 +171,6 @@
 			"revisionTime": "2017-06-20T10:48:52Z"
 		},
 		{
-			"checksumSHA1": "gBf0sF5E8awXnO0ekCd7XZODsnA=",
-			"path": "anaco-go-backend/common",
-			"revision": "04466cd4c8f1fab1a04772741e5a05959393efc9",
-			"revisionTime": "2018-01-10T08:24:26Z"
-		},
-		{
-			"checksumSHA1": "cKrPbZbK9BtzFNc0B6akmn5Cn/I=",
-			"path": "anaco-go-backend/users",
-			"revision": "04466cd4c8f1fab1a04772741e5a05959393efc9",
-			"revisionTime": "2018-01-10T08:24:26Z"
-		},
-		{
 			"checksumSHA1": "oCH3J96RWvO8W4xjix47PModpio=",
 			"path": "golang.org/x/crypto/bcrypt",
 			"revision": "1a580b3eff7814fc9b40602fd35256c63b50f491",
