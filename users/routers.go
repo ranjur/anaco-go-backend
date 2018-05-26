@@ -6,6 +6,12 @@ import (
 	"anaco-go-backend/common"
 	"gopkg.in/gin-gonic/gin.v1"
 	"net/http"
+	"fmt"
+	"strconv"
+	"math/rand"
+	"os"
+	"log"
+	"io"
 )
 
 func UsersRegister(router *gin.RouterGroup) {
@@ -114,7 +120,24 @@ func UserRetrieve(c *gin.Context) {
 }
 
 func UserUpdate(c *gin.Context) {
+	file, header , err := c.Request.FormFile("image")
+	filename := header.Filename
+	fmt.Println(header.Filename)
+	filename = strconv.Itoa(rand.Intn(99999))+filename
+	out, err := os.Create("./media/"+filename)
+	var file_path = "/media/"+filename
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer out.Close()
+	_, err = io.Copy(out, file)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("%s-%s", out, c.Keys)
 	myUserModel := c.MustGet("my_user_model").(UserModel)
+	myUserModel.Image = file_path
+
 	userModelValidator := NewUserModelValidatorFillWith(myUserModel)
 	if err := userModelValidator.Bind(c); err != nil {
 		c.JSON(http.StatusUnprocessableEntity, common.NewValidatorError(err))
