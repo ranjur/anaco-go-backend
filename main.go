@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 
+	"github.com/gin-contrib/cors"
 	"gopkg.in/gin-gonic/gin.v1"
 
 	"github.com/jinzhu/gorm"
@@ -23,10 +24,12 @@ func main() {
 	defer db.Close()
 
 	r := gin.Default()
+	r.Use(cors.Default())
 
 	r.Static("/media", "./media")
 
 	v1 := r.Group("/api")
+
 	users.UsersRegister(v1.Group("/users"))
 	v1.Use(users.AuthMiddleware(false))
 
