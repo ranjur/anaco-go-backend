@@ -9,7 +9,6 @@ import (
 type CommentModelValidator struct {
 	Comment struct {
 		Body string `form:"body" json:"body" binding:"required,max=2048"`
-		Username string `form:"username" json:"username" binding:"exists,alphanum,min=4,max=255"`
 	} `json:"comment"`
 	commentModel CommentModel `json:"-"`
 }

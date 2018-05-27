@@ -9,7 +9,7 @@ import (
 )
 
 func CommentsRegister(router *gin.RouterGroup) {
-	router.POST("/", CommentCreate)
+	router.POST("/:username", CommentCreate)
 	router.GET("/:username", UserCommentList)
 
 }
@@ -20,7 +20,7 @@ func CommentCreate(c *gin.Context) {
 		c.JSON(http.StatusUnprocessableEntity, common.NewValidatorError(err))
 		return
 	}
-	username := c.PostForm("username")
+	username := c.Param("username")
 	toUserModel, err := users.FindOneUser(&users.UserModel{Username: username})
 	if err != nil {
 		c.JSON(http.StatusNotFound, common.NewError("comments", errors.New("Invalid username")))
