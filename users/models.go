@@ -2,7 +2,6 @@ package users
 
 import (
 	"errors"
-	"github.com/jinzhu/gorm"
 	"anaco-go-backend/common"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -21,30 +20,11 @@ type UserModel struct {
 	PasswordHash string  `gorm:"column:password;not null"`
 }
 
-// A hack way to save ManyToMany relationship,
-// gorm will build the alias as FollowingBy <-> FollowingByID <-> "following_by_id".
-//
-// DB schema looks like: id, created_at, updated_at, deleted_at, following_id, followed_by_id.
-//
-// Retrieve them by:
-// 	db.Where(FollowModel{ FollowingID:  v.ID, FollowedByID: u.ID, }).First(&follow)
-// 	db.Where(FollowModel{ FollowedByID: u.ID, }).Find(&follows)
-//
-// More details about gorm.Model: http://jinzhu.me/gorm/models.html#conventions
-type FollowModel struct {
-	gorm.Model
-	Following    UserModel
-	FollowingID  uint
-	FollowedBy   UserModel
-	FollowedByID uint
-}
-
 // Migrate the schema of database if needed
 func AutoMigrate() {
 	db := common.GetDB()
 
 	db.AutoMigrate(&UserModel{})
-	db.AutoMigrate(&FollowModel{})
 }
 
 // What's bcrypt? https://en.wikipedia.org/wiki/Bcrypt
@@ -100,58 +80,4 @@ func (model *UserModel) Update(data interface{}) error {
 	db := common.GetDB()
 	err := db.Model(model).Update(data).Error
 	return err
-}
-
-// You could add a following relationship as userModel1 following userModel2
-// 	err = userModel1.following(userModel2)
-func (u UserModel) following(v UserModel) error {
-	db := common.GetDB()
-	var follow FollowModel
-	err := db.FirstOrCreate(&follow, &FollowModel{
-		FollowingID:  v.ID,
-		FollowedByID: u.ID,
-	}).Error
-	return err
-}
-
-// You could check whether  userModel1 following userModel2
-// 	followingBool = myUserModel.isFollowing(self.UserModel)
-func (u UserModel) isFollowing(v UserModel) bool {
-	db := common.GetDB()
-	var follow FollowModel
-	db.Where(FollowModel{
-		FollowingID:  v.ID,
-		FollowedByID: u.ID,
-	}).First(&follow)
-	return follow.ID != 0
-}
-
-// You could delete a following relationship as userModel1 following userModel2
-// 	err = userModel1.unFollowing(userModel2)
-func (u UserModel) unFollowing(v UserModel) error {
-	db := common.GetDB()
-	err := db.Where(FollowModel{
-		FollowingID:  v.ID,
-		FollowedByID: u.ID,
-	}).Delete(FollowModel{}).Error
-	return err
-}
-
-// You could get a following list of userModel
-// 	followings := userModel.GetFollowings()
-func (u UserModel) GetFollowings() []UserModel {
-	db := common.GetDB()
-	tx := db.Begin()
-	var follows []FollowModel
-	var followings []UserModel
-	tx.Where(FollowModel{
-		FollowedByID: u.ID,
-	}).Find(&follows)
-	for _, follow := range follows {
-		var userModel UserModel
-		tx.Model(&follow).Related(&userModel, "Following")
-		followings = append(followings, userModel)
-	}
-	tx.Commit()
-	return followings
 }

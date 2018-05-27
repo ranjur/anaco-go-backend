@@ -20,19 +20,6 @@ type ProfileResponse struct {
 	Following bool    `json:"following"`
 }
 
-// Put your response logic including wrap the userModel here.
-func (self *ProfileSerializer) Response() ProfileResponse {
-	myUserModel := self.C.MustGet("my_user_model").(UserModel)
-	profile := ProfileResponse{
-		ID:        self.ID,
-		Username:  self.Username,
-		Bio:       self.Bio,
-		Image:     self.Image,
-		Following: myUserModel.isFollowing(self.UserModel),
-	}
-	return profile
-}
-
 type UserSerializer struct {
 	c *gin.Context
 

@@ -25,61 +25,9 @@ func UserRegister(router *gin.RouterGroup) {
 	router.PUT("/", UserUpdate)
 }
 
-func ProfileRegister(router *gin.RouterGroup) {
-	router.GET("/:username", ProfileRetrieve)
-	router.POST("/:username/follow", ProfileFollow)
-	router.DELETE("/:username/follow", ProfileUnfollow)
-}
-
 func UserLIst(router *gin.RouterGroup) {
 	router.GET("/", UserListing)
 	router.GET("/:username", UserDetail)
-}
-
-func ProfileRetrieve(c *gin.Context) {
-	username := c.Param("username")
-	userModel, err := FindOneUser(&UserModel{Username: username})
-	if err != nil {
-		c.JSON(http.StatusNotFound, common.NewError("profile", errors.New("Invalid username")))
-		return
-	}
-	profileSerializer := ProfileSerializer{c, userModel}
-	c.JSON(http.StatusOK, gin.H{"profile": profileSerializer.Response()})
-}
-
-func ProfileFollow(c *gin.Context) {
-	username := c.Param("username")
-	userModel, err := FindOneUser(&UserModel{Username: username})
-	if err != nil {
-		c.JSON(http.StatusNotFound, common.NewError("profile", errors.New("Invalid username")))
-		return
-	}
-	myUserModel := c.MustGet("my_user_model").(UserModel)
-	err = myUserModel.following(userModel)
-	if err != nil {
-		c.JSON(http.StatusUnprocessableEntity, common.NewError("database", err))
-		return
-	}
-	serializer := ProfileSerializer{c, userModel}
-	c.JSON(http.StatusOK, gin.H{"profile": serializer.Response()})
-}
-
-func ProfileUnfollow(c *gin.Context) {
-	username := c.Param("username")
-	userModel, err := FindOneUser(&UserModel{Username: username})
-	if err != nil {
-		c.JSON(http.StatusNotFound, common.NewError("profile", errors.New("Invalid username")))
-		return
-	}
-	myUserModel := c.MustGet("my_user_model").(UserModel)
-
-	err = myUserModel.unFollowing(userModel)
-	if err != nil {
-		c.JSON(http.StatusUnprocessableEntity, common.NewError("database", err))
-		return
-	}
-	serializer := ProfileSerializer{c, userModel}
-	c.JSON(http.StatusOK, gin.H{"profile": serializer.Response()})
 }
 
 func UsersRegistration(c *gin.Context) {

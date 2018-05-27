@@ -35,7 +35,6 @@ func main() {
 
 	v1.Use(users.AuthMiddleware(true))
 	users.UserRegister(v1.Group("/user"))
-	users.ProfileRegister(v1.Group("/profiles"))
 
 	comments.CommentsRegister(v1.Group("/comments"))
 	comments.CommentRegister(v1.Group("/comment"))
