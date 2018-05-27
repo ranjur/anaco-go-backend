@@ -65,6 +65,15 @@ func (c CommentModel) like(u users.UserModel) error {
 	return err
 }
 
+func (c CommentModel) dislike(u users.UserModel) error {
+	db := common.GetDB()
+	err := db.Where(CommentLikeModel{
+		UserID:  u.ID,
+		CommentID: c.ID,
+	}).Delete(CommentLikeModel{}).Error
+	return err
+}
+
 type CommentLikeModel struct {
 	gorm.Model
 	User    users.UserModel

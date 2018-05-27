@@ -17,6 +17,7 @@ func CommentsRegister(router *gin.RouterGroup) {
 
 func CommentRegister(router *gin.RouterGroup) {
 	router.POST("/:comment_id", CreateCommentLike)
+	router.DELETE("/:comment_id", CommentDisLike)
 
 }
 
@@ -74,4 +75,21 @@ func CreateCommentLike(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"status": "success","liked": true })
+}
+
+func CommentDisLike(c *gin.Context) {
+	commentID := c.Param("comment_id")
+	ID, err := strconv.ParseUint(commentID,10, 32)
+	thisComment, err := FindOneComment(uint(ID))
+	if err != nil {
+		c.JSON(http.StatusNotFound, common.NewError("comment", err))
+		return
+	}
+	myUserModel := c.MustGet("my_user_model").(users.UserModel)
+	err = thisComment.dislike(myUserModel)
+	if err != nil {
+		c.JSON(http.StatusUnprocessableEntity, common.NewError("database", err))
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"status": "success","liked": false })
 }
