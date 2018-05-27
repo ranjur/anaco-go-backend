@@ -81,4 +81,3 @@ type CommentLikeModel struct {
 	Comment   CommentModel
 	CommentID uint
 }
-

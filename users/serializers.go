@@ -64,6 +64,7 @@ type ListUserResponse struct {
 	Email    string  `json:"email"`
 	Bio      string  `json:"bio"`
 	Image    string `json:"image"`
+	CommentsCount uint  `json:"commentsCount"`
 }
 
 func (s *ListUserSerializer) Response() ListUserResponse {
@@ -73,6 +74,7 @@ func (s *ListUserSerializer) Response() ListUserResponse {
 		Email:    s.Email,
 		Bio:      s.Bio,
 		Image:    s.Image,
+		CommentsCount:    s.commentsCount(),
 	}
 	return user
 }

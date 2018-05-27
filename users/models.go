@@ -81,3 +81,23 @@ func (model *UserModel) Update(data interface{}) error {
 	err := db.Model(model).Update(data).Error
 	return err
 }
+
+//func (user UserModel) commentsCount() uint {
+//	db := common.GetDB()
+//	var count uint
+//	db.Model(&comments.CommentModel{}).Where(comments.CommentModel{
+//		ToUserID: user.ID,
+//	}).Count(&count)
+//	return count
+//}
+
+func (user UserModel) commentsCount() uint {
+	db := common.GetDB()
+	var count uint
+	type Result struct {
+		ID uint
+	}
+	var data Result
+	db.Raw("SELECT count(*) FROM comment_models WHERE to_user_id = ?", user.ID).Scan(&data).Count(&count)
+	return count
+}
