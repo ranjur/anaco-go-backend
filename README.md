@@ -12,7 +12,7 @@
 ## Planned features:
 https://docs.google.com/document/d/1YWNL2iQOYzkZVnDpC5yVHeYbIxBTosDT1ThOAKoMJi0/edit?usp=sharing
 
-##API server details:
+## API server details:
 - Used go and gin
 - API URL - http://206.189.147.1:8080/
 - Used token authentication
