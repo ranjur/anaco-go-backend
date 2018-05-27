@@ -38,6 +38,7 @@ func main() {
 	users.ProfileRegister(v1.Group("/profiles"))
 
 	comments.CommentsRegister(v1.Group("/comments"))
+	comments.CommentRegister(v1.Group("/comment"))
 
 	v1.Use(users.AuthMiddleware(true))
 	users.UserLIst(v1.Group("/all-users"))

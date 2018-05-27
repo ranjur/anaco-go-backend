@@ -33,6 +33,7 @@ func AutoMigrate() {
 	db := common.GetDB()
 
 	db.AutoMigrate(&CommentModel{})
+	db.AutoMigrate(&CommentLikeModel{})
 }
 
 func SaveOne(data interface{}) error {
@@ -40,3 +41,35 @@ func SaveOne(data interface{}) error {
 	err := db.Save(data).Error
 	return err
 }
+
+func FindOneComment(commentID uint) (CommentModel, error) {
+	db := common.GetDB()
+	var model CommentModel
+
+	tx := db.Begin()
+
+	tx.Where("id=?", commentID).First(&model)
+	var err = tx.Commit().Error
+	return model, err
+}
+
+
+
+func (c CommentModel) like(u users.UserModel) error {
+	db := common.GetDB()
+	var like CommentLikeModel
+	err := db.FirstOrCreate(&like, &CommentLikeModel{
+		UserID:  u.ID,
+		CommentID: c.ID,
+	}).Error
+	return err
+}
+
+type CommentLikeModel struct {
+	gorm.Model
+	User    users.UserModel
+	UserID  uint
+	Comment   CommentModel
+	CommentID uint
+}
+
