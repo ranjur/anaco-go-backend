@@ -29,7 +29,7 @@ func main() {
 	r.Static("/media", "./media")
 
 	v1 := r.Group("/api")
-
+	
 	users.UsersRegister(v1.Group("/users"))
 	v1.Use(users.AuthMiddleware(false))
 
@@ -72,5 +72,5 @@ func main() {
 	//}).First(&userAA)
 	//fmt.Println(userAA)
 
-	r.Run() // listen and serve on 0.0.0.0:8080
+	r.Run(":8000") // listen and serve on 0.0.0.0:8080
 }
