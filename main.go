@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"net/http"
 
 	"github.com/gin-contrib/cors"
 	"gopkg.in/gin-gonic/gin.v1"
@@ -10,6 +11,8 @@ import (
 	"anaco-go-backend/common"
 	"anaco-go-backend/users"
 	"anaco-go-backend/comments"
+
+	"github.com/qor/admin"
 )
 
 func Migrate(db *gorm.DB) {
@@ -25,6 +28,15 @@ func main() {
 
 	r := gin.Default()
 	r.Use(cors.Default())
+
+	// For admin
+	Admin := admin.New(&admin.AdminConfig{DB: db})
+	Admin.AddResource(&users.UserModel{})
+	Admin.AddResource(&comments.CommentModel{})
+	Admin.AddResource(&comments.CommentLikeModel{})
+	mux := http.NewServeMux()
+	Admin.MountTo("/admin", mux)
+	r.Any("/admin/*path", gin.WrapH(mux))
 
 	r.Static("/media", "./media")
 
