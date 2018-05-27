@@ -91,3 +91,12 @@ func (c CommentModel) isLiked(u users.UserModel) bool {
 	}).First(&comment)
 	return comment.ID != 0
 }
+
+func (c CommentModel) commentsCount() uint {
+	db := common.GetDB()
+	var count uint
+	db.Model(&CommentLikeModel{}).Where(CommentLikeModel{
+		CommentID: c.ID,
+	}).Count(&count)
+	return count
+}

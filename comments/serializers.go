@@ -22,6 +22,7 @@ type CommentResponse struct {
 	CreatedAt string                `json:"createdAt"`
 	UpdatedAt string                `json:"updatedAt"`
 	IsLiked bool                `json:"isLiked"`
+	LikesCount uint  `json:"likesCount"`
 }
 
 func (s *CommentSerializer) Response() CommentResponse {
@@ -33,6 +34,7 @@ func (s *CommentSerializer) Response() CommentResponse {
 		CreatedAt: s.CreatedAt.UTC().Format("2006-01-02T15:04:05.999Z"),
 		UpdatedAt: s.UpdatedAt.UTC().Format("2006-01-02T15:04:05.999Z"),
 		IsLiked: s.isLiked(myUserModel),
+		LikesCount: s.commentsCount(),
 	}
 	return response
 }
