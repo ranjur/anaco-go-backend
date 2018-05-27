@@ -2,6 +2,7 @@ package comments
 
 import (
 	"gopkg.in/gin-gonic/gin.v1"
+	"fmt"
 )
 
 type CommentSerializer struct {
@@ -23,6 +24,7 @@ type CommentResponse struct {
 }
 
 func (s *CommentSerializer) Response() CommentResponse {
+	fmt.Println(s)
 	response := CommentResponse{
 		ID:        s.ID,
 		Body:      s.Body,
@@ -36,6 +38,7 @@ func (s *CommentSerializer) Response() CommentResponse {
 func (s *CommentsSerializer) Response() []CommentResponse {
 	response := []CommentResponse{}
 	for _, comment := range s.Comments {
+		//fmt.Println(comment)
 		serializer := CommentSerializer{s.C, comment}
 		response = append(response, serializer.Response())
 	}

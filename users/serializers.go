@@ -72,6 +72,7 @@ func (self *UserSerializer) Response() UserResponse {
 }
 
 type ListUserResponse struct {
+	ID uint  `json:"id"`
 	Username string  `json:"username"`
 	Email    string  `json:"email"`
 	Bio      string  `json:"bio"`
@@ -80,6 +81,7 @@ type ListUserResponse struct {
 
 func (s *ListUserSerializer) Response() ListUserResponse {
 	user := ListUserResponse{
+		ID: s.ID,
 		Username: s.Username,
 		Email:    s.Email,
 		Bio:      s.Bio,

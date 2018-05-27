@@ -6,12 +6,16 @@ import (
 	"net/http"
 	"anaco-go-backend/users"
 	"anaco-go-backend/common"
+	"strconv"
 )
 
 func CommentsRegister(router *gin.RouterGroup) {
-	router.POST("/", CommentCreate)
+	router.POST("/:username", CommentCreate)
 	router.GET("/:username", UserCommentList)
+}
 
+func CommentRegister(router *gin.RouterGroup) {
+	router.POST("/:comment_id/like", CreateCommentLike)
 }
 
 func CommentCreate(c *gin.Context) {
@@ -20,7 +24,7 @@ func CommentCreate(c *gin.Context) {
 		c.JSON(http.StatusUnprocessableEntity, common.NewValidatorError(err))
 		return
 	}
-	username := c.PostForm("username")
+	username := c.Param("username")
 	toUserModel, err := users.FindOneUser(&users.UserModel{Username: username})
 	if err != nil {
 		c.JSON(http.StatusNotFound, common.NewError("comments", errors.New("Invalid username")))
@@ -46,9 +50,26 @@ func UserCommentList(c *gin.Context) {
 	}
 	commentModels, err := GetUserComments(UserModel)
 	if err != nil {
-		c.JSON(http.StatusNotFound, common.NewError("comments", errors.New("Database error")))
+		c.JSON(http.StatusNotFound, common.NewError("comments", err))
 		return
 	}
 	serializer := CommentsSerializer{c, commentModels}
 	c.JSON(http.StatusOK, gin.H{"comments": serializer.Response()})
+}
+
+func CreateCommentLike(c *gin.Context) {
+	commentID := c.Param("comment_id")
+	ID, err := strconv.ParseUint(commentID,10, 32)
+	thisComment, err := FindOneComment(&CommentModel{ID: uint(ID)})
+	if err != nil {
+		c.JSON(http.StatusNotFound, common.NewError("comment", errors.New("Invalid comment id")))
+		return
+	}
+	myUserModel := c.MustGet("my_user_model").(users.UserModel)
+	err = thisComment.like(myUserModel)
+	if err != nil {
+		c.JSON(http.StatusUnprocessableEntity, common.NewError("database", err))
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"status": "success","liked": true })
 }
