@@ -2,6 +2,7 @@ package comments
 
 import (
 	"gopkg.in/gin-gonic/gin.v1"
+	"anaco-go-backend/users"
 )
 
 type CommentSerializer struct {
@@ -20,15 +21,18 @@ type CommentResponse struct {
 	ToUserID  uint            `json:"to_user_id"`
 	CreatedAt string                `json:"createdAt"`
 	UpdatedAt string                `json:"updatedAt"`
+	IsLiked bool                `json:"isLiked"`
 }
 
 func (s *CommentSerializer) Response() CommentResponse {
+	myUserModel := s.C.MustGet("my_user_model").(users.UserModel)
 	response := CommentResponse{
 		ID:        s.ID,
 		Body:      s.Body,
 		ToUserID:    s.ToUserID,
 		CreatedAt: s.CreatedAt.UTC().Format("2006-01-02T15:04:05.999Z"),
 		UpdatedAt: s.UpdatedAt.UTC().Format("2006-01-02T15:04:05.999Z"),
+		IsLiked: s.isLiked(myUserModel),
 	}
 	return response
 }

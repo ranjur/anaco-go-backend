@@ -81,3 +81,13 @@ type CommentLikeModel struct {
 	Comment   CommentModel
 	CommentID uint
 }
+
+func (c CommentModel) isLiked(u users.UserModel) bool {
+	db := common.GetDB()
+	var comment CommentLikeModel
+	db.Where(CommentLikeModel{
+		UserID:  u.ID,
+		CommentID: c.ID,
+	}).First(&comment)
+	return comment.ID != 0
+}
