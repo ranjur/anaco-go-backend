@@ -35,8 +35,8 @@ func main() {
 	Admin.AddResource(&comments.CommentModel{})
 	Admin.AddResource(&comments.CommentLikeModel{})
 	mux := http.NewServeMux()
-	Admin.MountTo("/admin", mux)
-	r.Any("/admin/*path", gin.WrapH(mux))
+	Admin.MountTo("/SeNLfpE37WPkwqHP", mux)
+	r.Any("/SeNLfpE37WPkwqHP/*path", gin.WrapH(mux))
 
 	r.Static("/media", "./media")
 
